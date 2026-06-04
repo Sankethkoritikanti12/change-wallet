@@ -1,4 +1,4 @@
-const BASE = 'http://localhost:4000';
+const BASE = 'https://change-wallet-backend.onrender.com';
 
 async function request(method, path, body) {
   const res = await fetch(`${BASE}${path}`, {
