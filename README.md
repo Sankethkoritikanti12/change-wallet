@@ -8,11 +8,11 @@
 
 ---
 
-## 💡 The Problem
+##  The Problem
 
 Every time you pay cash at a gas station, you get coins back as change. Nobody wants coins. They end up lost in your car, couch, or trash.
 
-## ✅ The Solution
+##  The Solution
 
 Change Wallet automatically loads your coin change onto a digital gift card instead of giving you physical coins. Pay $1.49 with a $20 bill → get $18.00 back in bills → $0.51 goes straight to your card.
 
@@ -42,7 +42,7 @@ Change Wallet automatically loads your coin change onto a digital gift card inst
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -54,7 +54,7 @@ Change Wallet automatically loads your coin change onto a digital gift card inst
 
 ---
 
-## 📱 Screenshots
+##  Screenshots
 
 | Customer Wallet | Register POS | Admin Dashboard |
 |----------------|--------------|-----------------|
@@ -62,7 +62,7 @@ Change Wallet automatically loads your coin change onto a digital gift card inst
 
 ---
 
-## 🏃 Run Locally
+##  Run Locally
 
 ### Prerequisites
 - Node.js v18+
@@ -70,7 +70,7 @@ Change Wallet automatically loads your coin change onto a digital gift card inst
 
 ### Setup
 
-## 🏃 Run Locally
+##  Run Locally
 
 ### Prerequisites
 - Node.js v18+
@@ -109,7 +109,7 @@ Change Wallet automatically loads your coin change onto a digital gift card inst
 
 ---
 
-## 🔌 API Endpoints
+##  API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -125,11 +125,11 @@ Change Wallet automatically loads your coin change onto a digital gift card inst
 
 ---
 
-## 💰 How It Works
+##  How It Works
 
 ---
 
-## 🗺️ Roadmap
+##  Roadmap
 
 - [ ] JWT authentication
 - [ ] Push notifications (Firebase)
@@ -140,7 +140,7 @@ Change Wallet automatically loads your coin change onto a digital gift card inst
 
 ---
 
-## 👨‍💻 Built By
+##  Built By
 
 **Sanketh Koritikanti**
 - GitHub: [@Sankethkoritikanti12](https://github.com/Sankethkoritikanti12)
