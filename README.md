@@ -1,117 +1,153 @@
-# Change Wallet System
+# 🪙 Change Wallet
 
-Coin change goes to a digital gift card instead of your pocket.
+> Turn your coin change into a digital gift card — automatically.
 
-## Project structure
+**Live Demo:** [change-wallet.vercel.app](https://change-wallet.vercel.app)
 
-```
-change-wallet/
-├── database/
-│   └── schema.sql          ← Run this once in PostgreSQL
-├── backend/
-│   ├── server.js           ← Express API entry point
-│   ├── db.js               ← PostgreSQL connection
-│   ├── .env.example        ← Copy to .env and fill in
-│   ├── middleware/
-│   │   └── registerAuth.js ← Validates store API key
-│   └── routes/
-│       ├── transactions.js ← Core: POST /api/transaction
-│       ├── customers.js    ← Signup, lookup, history
-│       └── admin.js        ← Dashboard stats
-└── frontend/
-    └── src/
-        ├── App.jsx          ← Root, switches between views
-        ├── api/index.js     ← All fetch calls
-        └── pages/
-            ├── SignupLogin.jsx    ← Customer sign in / sign up
-            ├── WalletHome.jsx    ← Customer wallet screen
-            ├── RegisterScreen.jsx ← Cashier POS screen
-            └── AdminDashboard.jsx ← Owner overview
-```
+![Change Wallet](https://img.shields.io/badge/Status-Live-brightgreen) ![React](https://img.shields.io/badge/React-18-blue) ![Node.js](https://img.shields.io/badge/Node.js-24-green) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
 
-## Setup
+---
 
-### 1. Database
+## 💡 The Problem
 
-```bash
-# Create the database
-createdb change_wallet
+Every time you pay cash at a gas station, you get coins back as change. Nobody wants coins. They end up lost in your car, couch, or trash.
 
-# Run the schema (creates tables + seeds test data)
-psql change_wallet < database/schema.sql
-```
+## ✅ The Solution
 
-### 2. Backend
+Change Wallet automatically loads your coin change onto a digital gift card instead of giving you physical coins. Pay $1.49 with a $20 bill → get $18.00 back in bills → $0.51 goes straight to your card.
 
-```bash
-cd backend
-npm install
+---
 
-# Set up environment
-cp .env.example .env
-# Edit .env with your DATABASE_URL
+## 🚀 Features
 
-npm run dev
-# API runs on http://localhost:4000
-```
+### Customer App
+- 💳 Digital gift card with custom themes (Forest, Ocean, Midnight, Gold, Galaxy)
+- 📊 Transaction history with location
+- 🎁 Rewards system — earn $0.10 every 10 visits at Shell, Mobil, BP, Chevron
+- 📦 Physical card delivery to home address
+- 💬 AI-powered chat support
+- 📱 Mobile-first design with bottom tab navigation
 
-### 3. Frontend
+### Register / POS
+- 🔍 Look up customer by phone number
+- 💰 Auto-calculates coin change
+- ✅ Live preview before confirming
+- 📍 Location tracking per transaction
 
-```bash
-cd frontend
-npx create-react-app . --template minimal  # or use Vite
-# Copy the src/ files into your React project
+### Admin Dashboard
+- 👥 Full customer list with search
+- 📈 Real-time metrics (coins collected, active cards, balances)
+- 🗂️ Complete transaction history
+- 📊 Overview, Customers, and Transactions tabs
 
-# Create .env
-echo "REACT_APP_API_URL=http://localhost:4000" > .env
-echo "REACT_APP_REGISTER_KEY=test-register-key-12345" >> .env
+---
 
-npm start
-# App runs on http://localhost:3000
-```
+## 🛠️ Tech Stack
 
-## How to test the core flow
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React + Vite |
+| Backend | Node.js + Express |
+| Database | PostgreSQL |
+| Hosting | Vercel (frontend) + Render (backend) |
+| Styling | Inline CSS with custom design system |
 
-```bash
-# 1. Look up the test customer
-curl "http://localhost:4000/api/customers/lookup?phone=2485550192"
+---
 
-# 2. Process a transaction ($1.49 purchase, $20 cash)
-curl -X POST http://localhost:4000/api/transaction \
-  -H "Content-Type: application/json" \
-  -H "x-register-key: test-register-key-12345" \
-  -d '{
-    "phoneNumber": "2485550192",
-    "purchaseTotalCents": 149,
-    "cashGivenCents": 2000
-  }'
+## 📱 Screenshots
 
-# Response:
-# {
-#   "cashReturnedCents": 1800,     ← give $18.00 in bills
-#   "coinsToCardCents": 51,         ← $0.51 added to card
-#   "display": {
-#     "cashBack": "$18.00",
-#     "addedToCard": "$0.51",
-#     "newBalance": "$5.34"
-#   }
-# }
+| Customer Wallet | Register POS | Admin Dashboard |
+|----------------|--------------|-----------------|
+| Balance card with custom theme | Customer lookup + live preview | Metrics + customer list |
 
-# 3. Check the admin summary
-curl "http://localhost:4000/api/admin/summary"
-```
+---
 
-## Key decisions
+## 🏃 Run Locally
 
-- All money stored as integer cents — never floats
-- Every transaction is atomic (BEGIN/COMMIT) so balance + log always match
-- The register authenticates with a per-store API key (x-register-key header)
-- Phone number is the primary customer identifier — no physical card needed to get started
+### Prerequisites
+- Node.js v18+
+- PostgreSQL 16+
 
-## Next steps
+### Setup
 
-- Add SMS notification when coins are added (Twilio)
-- Add QR code generation in the customer app (use `qrcode.react`)
-- Add cash-out: customer spends balance at the register via the /redeem endpoint
-- Deploy backend to Railway or Render; frontend to Vercel
-- Add proper auth (JWT) before going to production — the current register key is simple but good enough to start
+## 🏃 Run Locally
+
+### Prerequisites
+- Node.js v18+
+- PostgreSQL 16+
+
+### Setup
+
+1. Clone the repo
+
+       git clone https://github.com/Sankethkoritikanti12/change-wallet.git
+       cd change-wallet
+
+2. Setup database
+
+       createdb change_wallet
+       psql change_wallet < database/schema.sql
+
+3. Setup backend
+
+       cd backend
+       npm install
+       cp .env.example .env
+       npm run dev
+
+4. Setup frontend
+
+       cd frontend
+       npm install
+       npm run dev
+
+### Test the app
+1. Open `http://localhost:5173`
+2. Sign in with phone: `(248) 555-0192`
+3. Click Register tab → enter `$1.49` purchase, `$20` cash
+4. See `$0.51` added to card automatically!
+
+---
+
+## 🔌 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/customers/register` | Register new customer |
+| GET | `/api/customers/lookup?phone=` | Look up customer by phone |
+| GET | `/api/customers/:id/history` | Transaction history |
+| POST | `/api/transaction` | Process cash transaction |
+| POST | `/api/transaction/redeem` | Redeem card balance |
+| GET | `/api/rewards/:customerId` | Get rewards progress |
+| POST | `/api/rewards/visit` | Record store visit |
+| GET | `/api/admin/summary` | Admin metrics |
+| GET | `/api/admin/customers` | All customers |
+
+---
+
+## 💰 How It Works
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] JWT authentication
+- [ ] Push notifications (Firebase)
+- [ ] Real POS integration (Square/Stripe Terminal)
+- [ ] NFC tap support
+- [ ] Mobile app (React Native)
+- [ ] Landing page for investors
+
+---
+
+## 👨‍💻 Built By
+
+**Sanketh Koritikanti**
+- GitHub: [@Sankethkoritikanti12](https://github.com/Sankethkoritikanti12)
+- Live: [change-wallet.vercel.app](https://change-wallet.vercel.app)
+
+---
+
+## 📄 License
+
+MIT License — feel free to use this project as inspiration!
