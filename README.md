@@ -18,7 +18,7 @@ Change Wallet automatically loads your coin change onto a digital gift card inst
 
 ---
 
-## 🚀 Features
+## Features
 
 ### Customer App
 - 💳 Digital gift card with custom themes (Forest, Ocean, Midnight, Gold, Galaxy)
