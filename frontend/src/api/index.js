@@ -14,7 +14,7 @@ async function request(method, path, body) {
 export const api = {
   registerCustomer: (name, phoneNumber, email, address, city, state, zip) =>
     request('POST', '/api/customers/register', {
-      name, phoneNumber, email, address, city, state, zip
+      name, phoneNumber: phoneNumber.replace(/\D/g, ''), email, address, city, state, zip
     }),
 
   lookupCustomer: (phone) =>
