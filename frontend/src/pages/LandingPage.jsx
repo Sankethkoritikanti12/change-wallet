@@ -273,7 +273,9 @@ export default function LandingPage({ onGetStarted }) {
         </div>
         <div style={{ background: '#f9f9f9', borderRadius: 12, padding: '16px 20px', marginBottom: 12 }}>
           <p style={{ fontSize: 12, color: '#999', margin: '0 0 4px' }}>EMAIL</p>
-          <a href="mailto:kortikantisanketh@gmail.com" style={{ fontWeight: 600, fontSize: 15, color: '#0F6E56', textDecoration: 'none' }}>
+          <a href="https://mail.google.com/mail/?view=cm&to=kortikantisanketh@gmail.com&su=Change Wallet Investment Inquiry"
+target="_blank"
+rel="noreferrer" style={{ fontWeight: 600, fontSize: 15, color: '#0F6E56', textDecoration: 'none' }}>
             kortikantisanketh@gmail.com
           </a>
         </div>
@@ -291,7 +293,9 @@ export default function LandingPage({ onGetStarted }) {
         </div>
       </div>
 
-      <a href="mailto:kortikantisanketh@gmail.com" style={{
+      <a href="https://mail.google.com/mail/?view=cm&to=kortikantisanketh@gmail.com&su=Change Wallet Investment Inquiry"
+target="_blank"
+rel="noreferrer" style={{
         display: 'block', textAlign: 'center',
         background: '#0F6E56', color: '#fff',
         padding: '14px', borderRadius: 12, fontSize: 15,
@@ -315,7 +319,9 @@ export default function LandingPage({ onGetStarted }) {
         <div style={{ display: 'flex', gap: 20 }}>
           <a href="https://github.com/Sankethkoritikanti12/change-wallet" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>GitHub</a>
           <a href="#" onClick={e => { e.preventDefault(); onGetStarted(); }} style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>App</a>
-          <a href="mailto:kortikantisanketh@gmail.com" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>Contact</a>
+          <a href="https://mail.google.com/mail/?view=cm&to=kortikantisanketh@gmail.com&su=Change Wallet Investment Inquiry"
+target="_blank"
+rel="noreferrer" style={{ fontSize: 13, color: '#666', textDecoration: 'none' }}>Contact</a>
         </div>
       </footer>
 
