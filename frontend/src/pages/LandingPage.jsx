@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 export default function LandingPage({ onGetStarted }) {
+  const [showContact, setShowContact] = useState(false);
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', color: '#111', background: '#fff' }}>
 
@@ -231,14 +234,75 @@ export default function LandingPage({ onGetStarted }) {
             </div>
           ))}
         </div>
-        <a href="mailto:kortikantisanketh@gmail.com" style={{
-          display: 'inline-block', background: '#0F6E56', color: '#fff',
-          padding: '14px 36px', borderRadius: 12, fontSize: 16,
-          fontWeight: 700, textDecoration: 'none',
-          boxShadow: '0 4px 20px rgba(15,110,86,0.3)'
-        }}>
-          Contact us to invest
-        </a>
+       <button onClick={() => setShowContact(true)} style={{
+  background: '#0F6E56', color: '#fff', border: 'none',
+  padding: '14px 36px', borderRadius: 12, fontSize: 16,
+  fontWeight: 700, cursor: 'pointer',
+  boxShadow: '0 4px 20px rgba(15,110,86,0.3)'
+}}>
+  Contact us to invest
+</button>
+
+{showContact && (
+  <div style={{
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    zIndex: 500, padding: 24
+  }}>
+    <div style={{
+      background: '#fff', borderRadius: 20, padding: 32,
+      width: '100%', maxWidth: 440,
+      boxShadow: '0 20px 60px rgba(0,0,0,0.2)'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <p style={{ fontWeight: 800, fontSize: 20, margin: 0 }}>Get in touch</p>
+        <button onClick={() => setShowContact(false)} style={{
+          background: 'none', border: 'none', fontSize: 20,
+          cursor: 'pointer', color: '#999'
+        }}>✕</button>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <p style={{ fontSize: 13, color: '#999', margin: '0 0 16px' }}>
+          Interested in investing in Change Wallet? Reach out directly:
+        </p>
+        <div style={{ background: '#f9f9f9', borderRadius: 12, padding: '16px 20px', marginBottom: 12 }}>
+          <p style={{ fontSize: 12, color: '#999', margin: '0 0 4px' }}>FOUNDER</p>
+          <p style={{ fontWeight: 700, fontSize: 16, margin: '0 0 4px' }}>Sanketh Koritikanti</p>
+          <p style={{ fontSize: 14, color: '#666', margin: 0 }}>Full Stack Developer</p>
+        </div>
+        <div style={{ background: '#f9f9f9', borderRadius: 12, padding: '16px 20px', marginBottom: 12 }}>
+          <p style={{ fontSize: 12, color: '#999', margin: '0 0 4px' }}>EMAIL</p>
+          <a href="mailto:kortikantisanketh@gmail.com" style={{ fontWeight: 600, fontSize: 15, color: '#0F6E56', textDecoration: 'none' }}>
+            kortikantisanketh@gmail.com
+          </a>
+        </div>
+        <div style={{ background: '#f9f9f9', borderRadius: 12, padding: '16px 20px', marginBottom: 12 }}>
+          <p style={{ fontSize: 12, color: '#999', margin: '0 0 4px' }}>GITHUB</p>
+          <a href="https://github.com/Sankethkoritikanti12/change-wallet" target="_blank" rel="noreferrer" style={{ fontWeight: 600, fontSize: 15, color: '#0F6E56', textDecoration: 'none' }}>
+            github.com/Sankethkoritikanti12
+          </a>
+        </div>
+        <div style={{ background: '#f9f9f9', borderRadius: 12, padding: '16px 20px' }}>
+          <p style={{ fontSize: 12, color: '#999', margin: '0 0 4px' }}>LIVE DEMO</p>
+          <a href="https://change-wallet.vercel.app" target="_blank" rel="noreferrer" style={{ fontWeight: 600, fontSize: 15, color: '#0F6E56', textDecoration: 'none' }}>
+            change-wallet.vercel.app
+          </a>
+        </div>
+      </div>
+
+      <a href="mailto:kortikantisanketh@gmail.com" style={{
+        display: 'block', textAlign: 'center',
+        background: '#0F6E56', color: '#fff',
+        padding: '14px', borderRadius: 12, fontSize: 15,
+        fontWeight: 700, textDecoration: 'none',
+        marginTop: 8
+      }}>
+        Send email now
+      </a>
+    </div>
+  </div>
+)}
       </section>
 
       {/* Footer */}
