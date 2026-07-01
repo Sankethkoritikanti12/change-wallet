@@ -1,9 +1,17 @@
 const BASE = 'https://change-wallet-backend.onrender.com';
 
+function getToken() {
+  return localStorage.getItem('cw_token');
+}
+
 async function request(method, path, body) {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = getToken();
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
   const res = await fetch(`${BASE}${path}`, {
     method,
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: body ? JSON.stringify(body) : undefined,
   });
   const data = await res.json();
@@ -12,9 +20,15 @@ async function request(method, path, body) {
 }
 
 export const api = {
-  registerCustomer: (name, phoneNumber, email, address, city, state, zip) =>
+  register: (name, phoneNumber, password, email, address, city, state, zip) =>
     request('POST', '/api/customers/register', {
-      name, phoneNumber: phoneNumber.replace(/\D/g, ''), email, address, city, state, zip
+      name, phoneNumber: phoneNumber.replace(/\D/g, ''),
+      password, email, address, city, state, zip
+    }),
+
+  login: (phoneNumber, password) =>
+    request('POST', '/api/customers/login', {
+      phoneNumber: phoneNumber.replace(/\D/g, ''), password
     }),
 
   lookupCustomer: (phone) =>
@@ -25,6 +39,10 @@ export const api = {
 
   getOrders: (customerId) =>
     request('GET', `/api/customers/${customerId}/orders`),
+
+  saveToken: (token) => localStorage.setItem('cw_token', token),
+  clearToken: () => localStorage.removeItem('cw_token'),
+  getToken,
 };
 
 export function registerApi(apiKey) {
@@ -47,7 +65,6 @@ export function registerApi(apiKey) {
       regRequest('POST', '/api/transaction', {
         phoneNumber, purchaseTotalCents, cashGivenCents, location
       }),
-
     redeemBalance: (phoneNumber, amountCents) =>
       regRequest('POST', '/api/transaction/redeem', { phoneNumber, amountCents }),
   };
@@ -56,7 +73,6 @@ export function registerApi(apiKey) {
 export const adminApi = {
   getSummary: (storeId) =>
     request('GET', `/api/admin/summary${storeId ? `?storeId=${storeId}` : ''}`),
-
   getTransactions: (limit = 50, offset = 0) =>
     request('GET', `/api/admin/transactions?limit=${limit}&offset=${offset}`),
 };

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 function generateCardNumber() {
   const a = Math.floor(1000 + Math.random() * 9000);
@@ -8,12 +10,23 @@ function generateCardNumber() {
   return `CW-${a}-${b}`;
 }
 
+function generateToken(customerId, name) {
+  return jwt.sign(
+    { id: customerId, name },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+}
+
 // POST /api/customers/register
 router.post('/register', async (req, res) => {
-  const { name, phoneNumber, email, address, city, state, zip } = req.body;
+  const { name, phoneNumber, email, password, address, city, state, zip } = req.body;
 
-  if (!name || !phoneNumber) {
-    return res.status(400).json({ error: 'name and phoneNumber are required' });
+  if (!name || !phoneNumber || !password) {
+    return res.status(400).json({ error: 'name, phoneNumber and password are required' });
+  }
+  if (password.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters' });
   }
 
   const cleanPhone = phoneNumber.replace(/\D/g, '');
@@ -27,12 +40,15 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ error: 'Phone number already registered' });
     }
 
+    // Encrypt password
+    const passwordHash = await bcrypt.hash(password, 10);
+
     await db.query('BEGIN');
 
     const customerResult = await db.query(
-      `INSERT INTO customers (name, phone_number, email, address, city, state, zip)
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
-      [name, cleanPhone, email || null, address || null, city || null, state || null, zip || null]
+      `INSERT INTO customers (name, phone_number, email, password_hash, address, city, state, zip)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+      [name, cleanPhone, email || null, passwordHash, address || null, city || null, state || null, zip || null]
     );
     const customerId = customerResult.rows[0].id;
 
@@ -43,7 +59,6 @@ router.post('/register', async (req, res) => {
     );
     const cardId = cardResult.rows[0].id;
 
-    // If address provided, create a physical card order
     let order = null;
     if (address && city && state && zip) {
       const orderResult = await db.query(
@@ -56,8 +71,12 @@ router.post('/register', async (req, res) => {
 
     await db.query('COMMIT');
 
+    // Generate JWT token
+    const token = generateToken(customerId, name);
+
     res.status(201).json({
       success: true,
+      token,
       customer: { id: customerId, name, phoneNumber: cleanPhone, address, city, state, zip },
       card: { id: cardId, cardNumber: cardResult.rows[0].card_number, balanceCents: 0 },
       order: order ? { id: order.id, status: order.status } : null
@@ -66,6 +85,71 @@ router.post('/register', async (req, res) => {
     await db.query('ROLLBACK');
     console.error('Registration error:', err);
     res.status(500).json({ error: 'Failed to register customer' });
+  }
+});
+
+// POST /api/customers/login
+router.post('/login', async (req, res) => {
+  const { phoneNumber, password } = req.body;
+
+  if (!phoneNumber || !password) {
+    return res.status(400).json({ error: 'phoneNumber and password are required' });
+  }
+
+  const cleanPhone = phoneNumber.replace(/\D/g, '');
+
+  try {
+    const { rows } = await db.query(
+      `SELECT c.id, c.name, c.phone_number, c.email, c.address, c.city, c.state, c.zip,
+              c.password_hash,
+              gc.id AS gift_card_id, gc.card_number, gc.balance_cents
+       FROM customers c
+       JOIN gift_cards gc ON gc.customer_id = c.id
+       WHERE c.phone_number = $1 AND gc.status = 'active'`,
+      [cleanPhone]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Phone number not found. Please sign up first.' });
+    }
+
+    const customer = rows[0];
+
+    // Check password
+    if (!customer.password_hash) {
+      return res.status(400).json({ error: 'This account was created without a password. Please sign up again.' });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, customer.password_hash);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Incorrect password. Please try again.' });
+    }
+
+    // Generate JWT token
+    const token = generateToken(customer.id, customer.name);
+
+    res.json({
+      success: true,
+      token,
+      customer: {
+        id: customer.id,
+        name: customer.name,
+        phoneNumber: customer.phone_number,
+        address: customer.address,
+        city: customer.city,
+        state: customer.state,
+        zip: customer.zip
+      },
+      card: {
+        id: customer.gift_card_id,
+        cardNumber: customer.card_number,
+        balanceCents: customer.balance_cents,
+        balanceDisplay: `$${(customer.balance_cents / 100).toFixed(2)}`
+      }
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Failed to log in' });
   }
 });
 
@@ -122,8 +206,7 @@ router.get('/:customerId/history', async (req, res) => {
     );
     res.json({
       transactions: rows.map(r => ({
-        id: r.id,
-        type: r.type,
+        id: r.id, type: r.type,
         amountCents: r.coins_to_card_cents,
         amountDisplay: `${r.coins_to_card_cents > 0 ? '+' : ''}$${(Math.abs(r.coins_to_card_cents) / 100).toFixed(2)}`,
         storeName: r.store_name,
@@ -142,8 +225,7 @@ router.get('/:customerId/orders', async (req, res) => {
   try {
     const { rows } = await db.query(
       `SELECT co.id, co.status, co.tracking_number, co.created_at, co.updated_at,
-              co.address, co.city, co.state, co.zip,
-              gc.card_number
+              co.address, co.city, co.state, co.zip, gc.card_number
        FROM card_orders co
        JOIN gift_cards gc ON gc.id = co.gift_card_id
        WHERE co.customer_id = $1

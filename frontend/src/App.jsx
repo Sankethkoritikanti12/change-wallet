@@ -1,3 +1,4 @@
+import { api } from './api';
 import { useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import SignupLogin from './pages/SignupLogin';
@@ -28,6 +29,7 @@ export default function App() {
     setCard(null);
     setView('landing');
     window.location.hash = '';
+    api.clearToken();
   }
 
   function goToApp() {
